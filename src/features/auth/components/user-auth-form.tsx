@@ -10,35 +10,57 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import * as z from 'zod';
-import GithubSignInButton from './github-auth-button';
+import { getFirebaseAuth } from '@/lib/firebase/client';
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword
+} from 'firebase/auth';
 
 const formSchema = z.object({
-  email: z.string().email({ message: 'Enter a valid email address' })
+  email: z.string().email({ message: 'Enter a valid email address' }),
+  password: z
+    .string()
+    .min(6, { message: 'Password must be between 6 and 100 characters long' })
+    .max(100, { message: 'Password must be between 6 and 100 characters long' })
 });
 
 type UserFormValue = z.infer<typeof formSchema>;
 
 export default function UserAuthForm() {
+  const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get('callbackUrl');
+  const redirectUrl = searchParams.get('redirect_url') || '/dashboard/overview';
   const [loading, startTransition] = useTransition();
-  const defaultValues = {
-    email: 'demo@gmail.com'
-  };
+  const defaultValues = { email: '', password: '' };
+
   const form = useForm<UserFormValue>({
     resolver: zodResolver(formSchema),
     defaultValues
   });
 
   const onSubmit = async (data: UserFormValue) => {
-    startTransition(() => {
-      console.log('continue with email clicked');
-      toast.success('Signed In Successfully!');
+    const auth = getFirebaseAuth();
+    startTransition(async () => {
+      try {
+        // Try sign-in; if user doesn’t exist, create
+        // try {
+        //   await signInWithEmailAndPassword(auth, data.email, data.password);
+        // } catch (e) {
+        //   await createUserWithEmailAndPassword(auth, data.email, data.password);
+        // }
+        await signInWithEmailAndPassword(auth, data.email, data.password);
+
+        toast.success('Signed in successfully');
+        router.replace(redirectUrl);
+      } catch (err) {
+        console.error(err);
+        toast.error('Sign-in failed');
+      }
     });
   };
 
@@ -68,26 +90,35 @@ export default function UserAuthForm() {
             )}
           />
 
+          <FormField
+            control={form.control}
+            name='password'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <Input
+                    type='password'
+                    placeholder='Enter your password...'
+                    disabled={loading}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           <Button
             disabled={loading}
             className='mt-2 ml-auto w-full'
             type='submit'
           >
-            Continue With Email
+            Login
           </Button>
         </form>
       </Form>
-      <div className='relative'>
-        <div className='absolute inset-0 flex items-center'>
-          <span className='w-full border-t' />
-        </div>
-        <div className='relative flex justify-center text-xs uppercase'>
-          <span className='bg-background text-muted-foreground px-2'>
-            Or continue with
-          </span>
-        </div>
-      </div>
-      <GithubSignInButton />
+      {/* Social buttons rendered outside in sign-in view */}
     </>
   );
 }
