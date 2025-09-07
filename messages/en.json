@@ -1,0 +1,43 @@
+{
+  "common": {
+    "appName": "BanaNext",
+    "language": "Language",
+    "english": "English",
+    "vietnamese": "Vietnamese",
+    "profile": "Profile",
+    "signOut": "Sign out",
+    "dashboard": "Dashboard",
+    "areaManagement": "Manage Area/Lot",
+    "lots": "Area/Lot",
+    "cycles": "Cycle",
+    "productionLog": "Production Log",
+    "weeklyPlan": "Weekly Plan",
+    "taskApproval": "Task Approval",
+    "workers": "Workers",
+    "workersList": "Workers List",
+    "groupsManagement": "Manage Groups",
+    "contractTypes": "Contract Types",
+    "jobAllocations": "Job Allocations",
+    "wareHouseManagement": "Warehouse Management",
+    "configFarm": "Farm Configuration",
+    "taskCategories": "Task Categories",
+    "processStages": "Process Stages"
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "email": "Email",
+    "enterEmail": "Enter your email...",
+    "emailRequired": "Email is required",
+    "emailInvalid": "Email is invalid",
+    "password": "Password",
+    "enterPassword": "Enter your password...",
+    "passwordRequired": "Password is required",
+    "passwordInvalid": "Password must be between 6 and 100 characters long",
+    "loginSuccess": "Đăng nhập thành công",
+    "loginFailed": "Login failed, please check your login information",
+    "logoutSuccess": "Logout successful",
+    "logoutFailed": "Logout failed, please try again"
+  }
+}
+

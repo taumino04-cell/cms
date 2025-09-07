@@ -18,7 +18,6 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -30,61 +29,57 @@ import {
 } from '@/components/ui/sidebar';
 import { UserAvatarProfile } from '@/components/user-avatar-profile';
 import { navItems } from '@/constants/data';
-import { useMediaQuery } from '@/hooks/use-media-query';
 import { useFirebaseAuth } from './firebase-auth-provider';
 import {
-  IconBell,
   IconChevronRight,
   IconChevronsDown,
-  IconCreditCard,
   IconLogout,
-  IconPhotoUp,
   IconUserCircle
 } from '@tabler/icons-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import * as React from 'react';
 import { Icons } from '../icons';
-import { OrgSwitcher } from '../org-switcher';
-export const company = {
-  name: 'Acme Inc',
-  logo: IconPhotoUp,
-  plan: 'Enterprise'
-};
-
-const tenants = [
-  { id: '1', name: 'Acme Inc' },
-  { id: '2', name: 'Beta Corp' },
-  { id: '3', name: 'Gamma Ltd' }
-];
+// import { OrgSwitcher } from '../org-switcher';
+import { Leaf } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { Button } from '../ui/button';
 
 export default function AppSidebar() {
   const pathname = usePathname();
-  const { isOpen } = useMediaQuery();
   const { user, logout } = useFirebaseAuth();
   const router = useRouter();
-  const handleSwitchTenant = (_tenantId: string) => {
-    // Tenant switching functionality would be implemented here
+  const t = useTranslations('common');
+
+  const setLocale = (locale: 'en' | 'vi') => {
+    try {
+      document.cookie = `NEXT_LOCALE=${locale}; path=/; max-age=31536000`;
+      router.refresh();
+    } catch (e) {
+      // no-op
+    }
   };
 
-  const activeTenant = tenants[0];
-
-  React.useEffect(() => {
-    // Side effects based on sidebar state changes
-  }, [isOpen]);
+  const onLogout = React.useCallback(() => {
+    logout().then(() => router.push('/auth/sign-in'));
+  }, [logout, router]);
 
   return (
     <Sidebar collapsible='icon'>
       <SidebarHeader>
-        <OrgSwitcher
-          tenants={tenants}
-          defaultTenant={activeTenant}
-          onTenantSwitch={handleSwitchTenant}
-        />
+        <div className='flex flex-col gap-2 pt-4 pb-3'>
+          <div className='flex items-center gap-2 overflow-hidden'>
+            <div className='text-primary flex aspect-square size-8 items-center justify-center rounded-lg'>
+              <Leaf className='size-4' />
+            </div>
+            <div className='flex flex-col gap-0.5 leading-none'>
+              <span className='truncate font-semibold'>{t('appName')}</span>
+            </div>
+          </div>
+        </div>
       </SidebarHeader>
       <SidebarContent className='overflow-x-hidden'>
         <SidebarGroup>
-          <SidebarGroupLabel>Overview</SidebarGroupLabel>
           <SidebarMenu>
             {navItems.map((item) => {
               const Icon = item.icon ? Icons[item.icon] : Icons.logo;
@@ -98,28 +93,46 @@ export default function AppSidebar() {
                   <SidebarMenuItem>
                     <CollapsibleTrigger asChild>
                       <SidebarMenuButton
-                        tooltip={item.title}
+                        tooltip={t(item.title)}
                         isActive={pathname === item.url}
+                        className='pe-0'
+                        asChild
+                        slot='div'
                       >
-                        {item.icon && <Icon />}
-                        <span>{item.title}</span>
-                        <IconChevronRight className='ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90' />
+                        <div>
+                          <Link
+                            href={item.url}
+                            className='flex flex-1 items-center gap-2 text-sm [&>svg]:size-4 [&>svg]:shrink-0'
+                          >
+                            {item.icon && <Icon />}
+                            <span className='truncate'>{t(item.title)}</span>
+                          </Link>
+                          <Button variant={'ghost'} className='rounded-md'>
+                            <IconChevronRight className='rotate-[-90deg] transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90' />
+                          </Button>
+                        </div>
                       </SidebarMenuButton>
                     </CollapsibleTrigger>
                     <CollapsibleContent>
                       <SidebarMenuSub>
-                        {item.items?.map((subItem) => (
-                          <SidebarMenuSubItem key={subItem.title}>
-                            <SidebarMenuSubButton
-                              asChild
-                              isActive={pathname === subItem.url}
-                            >
-                              <Link href={subItem.url}>
-                                <span>{subItem.title}</span>
-                              </Link>
-                            </SidebarMenuSubButton>
-                          </SidebarMenuSubItem>
-                        ))}
+                        {item.items?.map((subItem) => {
+                          const IconSub = subItem.icon
+                            ? Icons[subItem.icon]
+                            : Icons.logo;
+                          return (
+                            <SidebarMenuSubItem key={subItem.title}>
+                              <SidebarMenuSubButton
+                                asChild
+                                isActive={pathname === subItem.url}
+                              >
+                                <Link href={subItem.url}>
+                                  {subItem.icon && <IconSub />}
+                                  <span>{t(subItem.title)}</span>
+                                </Link>
+                              </SidebarMenuSubButton>
+                            </SidebarMenuSubItem>
+                          );
+                        })}
                       </SidebarMenuSub>
                     </CollapsibleContent>
                   </SidebarMenuItem>
@@ -128,12 +141,12 @@ export default function AppSidebar() {
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
                     asChild
-                    tooltip={item.title}
+                    tooltip={t(item.title)}
                     isActive={pathname === item.url}
                   >
                     <Link href={item.url}>
                       <Icon />
-                      <span>{item.title}</span>
+                      <span>{t(item.title)}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -193,25 +206,27 @@ export default function AppSidebar() {
                     onClick={() => router.push('/dashboard/profile')}
                   >
                     <IconUserCircle className='mr-2 h-4 w-4' />
-                    Profile
+                    {t('profile')}
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <IconCreditCard className='mr-2 h-4 w-4' />
-                    Billing
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
+                  {/* <DropdownMenuItem>
                     <IconBell className='mr-2 h-4 w-4' />
                     Notifications
+                  </DropdownMenuItem> */}
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator />
+                <DropdownMenuLabel>{t('language')}</DropdownMenuLabel>
+                <DropdownMenuGroup>
+                  <DropdownMenuItem onClick={() => setLocale('en')}>
+                    {t('english')}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setLocale('vi')}>
+                    {t('vietnamese')}
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={() =>
-                    logout().then(() => router.push('/auth/sign-in'))
-                  }
-                >
+                <DropdownMenuItem onClick={onLogout}>
                   <IconLogout className='mr-2 h-4 w-4' />
-                  Sign out
+                  {t('signOut')}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

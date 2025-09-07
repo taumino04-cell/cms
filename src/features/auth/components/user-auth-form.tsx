@@ -16,22 +16,21 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import * as z from 'zod';
 import { getFirebaseAuth } from '@/lib/firebase/client';
-import {
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword
-} from 'firebase/auth';
-
-const formSchema = z.object({
-  email: z.string().email({ message: 'Enter a valid email address' }),
-  password: z
-    .string()
-    .min(6, { message: 'Password must be between 6 and 100 characters long' })
-    .max(100, { message: 'Password must be between 6 and 100 characters long' })
-});
-
-type UserFormValue = z.infer<typeof formSchema>;
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { useTranslations } from 'next-intl';
 
 export default function UserAuthForm() {
+  const t = useTranslations('auth');
+  const formSchema = z.object({
+    email: z.string().email({ message: t('emailInvalid') }),
+    password: z
+      .string()
+      .min(6, { message: t('passwordInvalid') })
+      .max(100, { message: t('passwordInvalid') })
+  });
+
+  type UserFormValue = z.infer<typeof formSchema>;
+
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectUrl = searchParams.get('redirect_url') || '/dashboard/overview';
@@ -55,11 +54,11 @@ export default function UserAuthForm() {
         // }
         await signInWithEmailAndPassword(auth, data.email, data.password);
 
-        toast.success('Signed in successfully');
+        toast.success(t('loginSuccess'));
         router.replace(redirectUrl);
       } catch (err) {
         console.error(err);
-        toast.error('Sign-in failed');
+        toast.error(t('loginFailed'));
       }
     });
   };
@@ -76,11 +75,11 @@ export default function UserAuthForm() {
             name='email'
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
+                <FormLabel>{t('email')}</FormLabel>
                 <FormControl>
                   <Input
                     type='email'
-                    placeholder='Enter your email...'
+                    placeholder={t('enterEmail')}
                     disabled={loading}
                     {...field}
                   />
@@ -95,11 +94,11 @@ export default function UserAuthForm() {
             name='password'
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Password</FormLabel>
+                <FormLabel>{t('password')}</FormLabel>
                 <FormControl>
                   <Input
                     type='password'
-                    placeholder='Enter your password...'
+                    placeholder={t('enterPassword')}
                     disabled={loading}
                     {...field}
                   />
@@ -114,7 +113,7 @@ export default function UserAuthForm() {
             className='mt-2 ml-auto w-full'
             type='submit'
           >
-            Login
+            {t('login')}
           </Button>
         </form>
       </Form>

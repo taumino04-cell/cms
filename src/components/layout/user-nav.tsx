@@ -1,4 +1,6 @@
 'use client';
+
+import { useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -12,10 +14,16 @@ import {
 import { UserAvatarProfile } from '@/components/user-avatar-profile';
 import { useRouter } from 'next/navigation';
 import { useFirebaseAuth } from '@/components/layout/firebase-auth-provider';
+import { useTranslations } from 'next-intl';
 
 export function UserNav() {
+  const t = useTranslations('common');
   const { user, logout } = useFirebaseAuth();
   const router = useRouter();
+  const onLogout = useCallback(() => {
+    logout().then(() => router.push('/auth/sign-in'));
+  }, [logout, router]);
+
   if (!user) return null;
 
   const avatarUser = {
@@ -50,18 +58,11 @@ export function UserNav() {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem onClick={() => router.push('/dashboard/profile')}>
-            Profile
+            {t('profile')}
           </DropdownMenuItem>
-          <DropdownMenuItem>Billing</DropdownMenuItem>
-          <DropdownMenuItem>Settings</DropdownMenuItem>
-          <DropdownMenuItem>New Team</DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem
-          onClick={() => logout().then(() => router.push('/auth/sign-in'))}
-        >
-          Sign out
-        </DropdownMenuItem>
+        <DropdownMenuItem onClick={onLogout}>{t('signOut')}</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
