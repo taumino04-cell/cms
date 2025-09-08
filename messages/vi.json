@@ -21,7 +21,11 @@
     "wareHouseManagement": "Quản lý kho",
     "configFarm": "Cấu hình farm",
     "taskCategories": "Hạng mục công việc",
-    "processStages": "Giai đoạn sản xuất"
+    "processStages": "Giai đoạn sản xuất",
+    "notFoundTitle": "Không tìm thấy trang",
+    "notFoundMessage": "Xin lỗi, chúng tôi không thể tìm thấy trang bạn đang tìm kiếm.",
+    "goBack": "Quay lại",
+    "backToHome": "Về trang chủ"
   },
   "auth": {
     "login": "Đăng nhập",
@@ -38,6 +42,17 @@
     "loginFailed": "Đăng nhập thất bại, vui lòng kiểm tra lại thông tin đăng nhập",
     "logoutSuccess": "Đăng xuất thành công",
     "logoutFailed": "Đăng xuất thất bại, vui lòng thử lại"
+  },
+  "farmSetup": {
+    "configFarm": "Cấu hình farm",
+    "taskCategories": "Hạng mục công việc",
+    "processStages": "Giai đoạn sản xuất",
+    "areaManagement": "Quản lý Khu",
+    "areaManagementDescription": "Thêm hoặc xóa các khu sản xuất trong farm của bạn.",
+    "addArea": "Thêm Khu",
+    "areaName": "Tên Khu",
+    "areaNumber": "Số Lô",
+    "actions": "Hành động"
   }
 }
 

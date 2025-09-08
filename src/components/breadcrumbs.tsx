@@ -9,9 +9,11 @@ import {
 } from '@/components/ui/breadcrumb';
 import { useBreadcrumbs } from '@/hooks/use-breadcrumbs';
 import { IconSlash } from '@tabler/icons-react';
+import { useTranslations } from 'next-intl';
 import { Fragment } from 'react';
 
 export function Breadcrumbs() {
+  const t = useTranslations('common');
   const items = useBreadcrumbs();
   if (items.length === 0) return null;
 
@@ -22,7 +24,9 @@ export function Breadcrumbs() {
           <Fragment key={item.title}>
             {index !== items.length - 1 && (
               <BreadcrumbItem className='hidden md:block'>
-                <BreadcrumbLink href={item.link}>{item.title}</BreadcrumbLink>
+                <BreadcrumbLink href={item.link}>
+                  {t(item.title)}
+                </BreadcrumbLink>
               </BreadcrumbItem>
             )}
             {index < items.length - 1 && (
@@ -31,7 +35,7 @@ export function Breadcrumbs() {
               </BreadcrumbSeparator>
             )}
             {index === items.length - 1 && (
-              <BreadcrumbPage>{item.title}</BreadcrumbPage>
+              <BreadcrumbPage>{t(item.title)}</BreadcrumbPage>
             )}
           </Fragment>
         ))}

@@ -67,7 +67,7 @@ export default function AppSidebar() {
   return (
     <Sidebar collapsible='icon'>
       <SidebarHeader>
-        <div className='flex flex-col gap-2 pt-4 pb-3'>
+        <div className='flex flex-col gap-2 pt-2 pb-3'>
           <div className='flex items-center gap-2 overflow-hidden'>
             <div className='text-primary flex aspect-square size-8 items-center justify-center rounded-lg'>
               <Leaf className='size-4' />

@@ -113,21 +113,21 @@ export const navItems: NavItem[] = [
   },
   {
     title: 'configFarm',
-    url: '/farm-setup',
+    url: '/dashboard/config-farm',
     icon: 'cog',
     isActive: false,
     shortcut: ['f', 's'],
     items: [
       {
         title: 'taskCategories',
-        url: '/farm-setup/task-categories',
+        url: '/dashboard/config-farm/task-categories',
         icon: 'listCheck',
         isActive: false,
         shortcut: ['f', '1']
       },
       {
         title: 'processStages',
-        url: '/farm-setup/production-stages',
+        url: '/dashboard/config-farm/process-stages',
         icon: 'factory',
         isActive: false,
         shortcut: ['f', '2']

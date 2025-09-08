@@ -21,7 +21,11 @@
     "wareHouseManagement": "Warehouse Management",
     "configFarm": "Farm Configuration",
     "taskCategories": "Task Categories",
-    "processStages": "Process Stages"
+    "processStages": "Process Stages",
+    "notFoundTitle": "Something's missing",
+    "notFoundMessage": "Sorry, we couldn't find the page you're looking for.",
+    "goBack": "Go back",
+    "backToHome": "Back to Home"
   },
   "auth": {
     "login": "Login",
@@ -38,6 +42,17 @@
     "loginFailed": "Login failed, please check your login information",
     "logoutSuccess": "Logout successful",
     "logoutFailed": "Logout failed, please try again"
+  },
+  "farmSetup": {
+    "configFarm": "Farm Configuration",
+    "taskCategories": "Task Categories",
+    "processStages": "Process Stages",
+    "areaManagement": "Area Management",
+    "areaManagementDescription": "Add or remove production areas in your farm.",
+    "addArea": "Add Area",
+    "areaName": "Area Name",
+    "areaNumber": "Area Number",
+    "actions": "Actions"
   }
 }
 
