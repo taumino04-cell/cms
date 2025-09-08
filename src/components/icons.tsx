@@ -31,8 +31,23 @@ import {
   IconX,
   IconLayoutKanban,
   IconBrandGithub,
-  IconBrandGoogle
+  IconBrandGoogle,
+  IconMap,
+  IconStackFront,
+  IconRecycle,
+  IconBook2,
+  IconCalendarMonth,
+  IconClipboardCheck,
+  IconCalendarClock
 } from '@tabler/icons-react';
+import {
+  GroupIcon,
+  WarehouseIcon,
+  CogIcon,
+  FactoryIcon,
+  ListChecksIcon,
+  UsersIcon
+} from 'lucide-react';
 
 export type Icon = React.ComponentType<IconProps>;
 
@@ -68,5 +83,20 @@ export const Icons = {
   github: IconBrandGithub,
   google: IconBrandGoogle,
   twitter: IconBrandTwitter,
-  check: IconCheck
+  check: IconCheck,
+  map: IconMap,
+  stackFront: IconStackFront,
+  recycle: IconRecycle,
+  bookText: IconBook2,
+  calendarDays: IconCalendarMonth,
+  clipboardCheck: IconClipboardCheck,
+  users: UsersIcon,
+  userCircle: IconUserCircle,
+  group: GroupIcon,
+  fileText: IconFileText,
+  calendarClock: IconCalendarClock,
+  wareHouse: WarehouseIcon,
+  cog: CogIcon,
+  listCheck: ListChecksIcon,
+  factory: FactoryIcon
 };

@@ -1,0 +1,43 @@
+{
+  "common": {
+    "appName": "BanaNext",
+    "language": "Ngôn ngữ",
+    "english": "Tiếng Anh",
+    "vietnamese": "Tiếng Việt",
+    "profile": "Hồ sơ",
+    "signOut": "Đăng xuất",
+    "dashboard": "Bảng điều khiển",
+    "areaManagement": "Quản lý khu/lô",
+    "lots": "Khu/Lô",
+    "cycles": "Chu trình/Vụ",
+    "productionLog": "Nhật ký sản xuất",
+    "weeklyPlan": "Kế hoạch tuần",
+    "taskApproval": "Duyệt công việc",
+    "workers": "Nhân công",
+    "workersList": "Danh sách nhân công",
+    "groupsManagement": "Quản lý nhóm",
+    "contractTypes": "Loại hợp đồng",
+    "jobAllocations": "Phân bổ công việc",
+    "wareHouseManagement": "Quản lý kho",
+    "configFarm": "Cấu hình farm",
+    "taskCategories": "Hạng mục công việc",
+    "processStages": "Giai đoạn sản xuất"
+  },
+  "auth": {
+    "login": "Đăng nhập",
+    "logout": "Đăng xuất",
+    "email": "Email",
+    "enterEmail": "Nhập email",
+    "emailRequired": "Email là bắt buộc",
+    "emailInvalid": "Email không hợp lệ",
+    "password": "Mật khẩu",
+    "enterPassword": "Nhập mật khẩu",
+    "passwordRequired": "Mật khẩu là bắt buộc",
+    "passwordInvalid": "Mật khẩu phải có độ dài từ 6 đến 100 ký tự",
+    "loginSuccess": "Đăng nhập thành công",
+    "loginFailed": "Đăng nhập thất bại, vui lòng kiểm tra lại thông tin đăng nhập",
+    "logoutSuccess": "Đăng xuất thành công",
+    "logoutFailed": "Đăng xuất thất bại, vui lòng thử lại"
+  }
+}
+

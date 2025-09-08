@@ -7,8 +7,13 @@ import type { Metadata, Viewport } from 'next';
 import { cookies } from 'next/headers';
 import NextTopLoader from 'nextjs-toploader';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
-import './globals.css';
-import './theme.css';
+import { NextIntlClientProvider } from 'next-intl';
+import { getMessages } from 'next-intl/server';
+import { notFound } from 'next/navigation';
+import { routing } from '@/i18n/routing';
+
+import '../globals.css';
+import '../theme.css';
 
 const META_THEME_COLORS = {
   light: '#ffffff',
@@ -25,16 +30,29 @@ export const viewport: Viewport = {
 };
 
 export default async function RootLayout({
-  children
+  children,
+  params
 }: {
   children: React.ReactNode;
+  params: Promise<{ locale: string }>;
 }) {
   const cookieStore = await cookies();
   const activeThemeValue = cookieStore.get('active_theme')?.value;
   const isScaled = activeThemeValue?.endsWith('-scaled');
 
+  const { locale } = await params;
+
+  // Ensure that the incoming `locale` is valid
+  if (!routing.locales.includes(locale as any)) {
+    notFound();
+  }
+
+  // Providing all messages to the client
+  // side is the easiest way to get started
+  const messages = await getMessages();
+
   return (
-    <html lang='en' suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{
@@ -65,10 +83,12 @@ export default async function RootLayout({
             disableTransitionOnChange
             enableColorScheme
           >
-            <Providers activeThemeValue={activeThemeValue as string}>
-              <Toaster />
-              {children}
-            </Providers>
+            <NextIntlClientProvider messages={messages} locale={locale}>
+              <Providers activeThemeValue={activeThemeValue as string}>
+                <Toaster />
+                {children}
+              </Providers>
+            </NextIntlClientProvider>
           </ThemeProvider>
         </NuqsAdapter>
       </body>

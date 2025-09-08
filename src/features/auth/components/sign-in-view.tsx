@@ -3,12 +3,9 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Metadata } from 'next';
-import Link from 'next/link';
 
 import { useFirebaseAuth } from '@/components/layout/firebase-auth-provider';
 import UserAuthForm from './user-auth-form';
-import { buttonVariants } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = {
   title: 'Authentication',
@@ -29,7 +26,7 @@ export default function SignInViewPage() {
         <div className='flex w-full max-w-md flex-col items-center justify-center space-y-6 rounded-lg border p-5 shadow-lg'>
           <UserAuthForm />
 
-          <p className='text-muted-foreground px-8 text-center text-sm'>
+          {/* <p className='text-muted-foreground px-8 text-center text-sm'>
             By clicking continue, you agree to our{' '}
             <Link
               href='/terms'
@@ -45,7 +42,7 @@ export default function SignInViewPage() {
               Privacy Policy
             </Link>
             .
-          </p>
+          </p> */}
         </div>
       </div>
     </div>
