@@ -11,22 +11,20 @@ import {
 import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useTransition } from 'react';
+import { useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import * as z from 'zod';
 import { getFirebaseAuth } from '@/lib/firebase/client';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useTranslations } from 'next-intl';
+import { Eye, EyeOff } from 'lucide-react';
 
 export default function UserAuthForm() {
   const t = useTranslations('auth');
   const formSchema = z.object({
     email: z.string().email({ message: t('emailInvalid') }),
-    password: z
-      .string()
-      .min(6, { message: t('passwordInvalid') })
-      .max(100, { message: t('passwordInvalid') })
+    password: z.string().min(1, { message: t('passwordRequired') })
   });
 
   type UserFormValue = z.infer<typeof formSchema>;
@@ -35,6 +33,7 @@ export default function UserAuthForm() {
   const searchParams = useSearchParams();
   const redirectUrl = searchParams.get('redirect_url') || '/dashboard/overview';
   const [loading, startTransition] = useTransition();
+  const [showPassword, setShowPassword] = useState(false);
   const defaultValues = { email: '', password: '' };
 
   const form = useForm<UserFormValue>({
@@ -96,12 +95,30 @@ export default function UserAuthForm() {
               <FormItem>
                 <FormLabel>{t('password')}</FormLabel>
                 <FormControl>
-                  <Input
-                    type='password'
-                    placeholder={t('enterPassword')}
-                    disabled={loading}
-                    {...field}
-                  />
+                  <div className='relative'>
+                    <Input
+                      type={showPassword ? 'text' : 'password'}
+                      placeholder={t('enterPassword')}
+                      disabled={loading}
+                      autoComplete='current-password'
+                      {...field}
+                    />
+                    <button
+                      type='button'
+                      onClick={() => setShowPassword((v) => !v)}
+                      disabled={loading}
+                      className='text-muted-foreground hover:text-foreground focus:ring-ring absolute top-1/2 right-2 -translate-y-1/2 rounded-sm p-1 focus:ring-2 focus:outline-none'
+                      aria-label={
+                        showPassword ? 'Hide password' : 'Show password'
+                      }
+                    >
+                      {showPassword ? (
+                        <EyeOff className='h-4 w-4' />
+                      ) : (
+                        <Eye className='h-4 w-4' />
+                      )}
+                    </button>
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -117,7 +134,6 @@ export default function UserAuthForm() {
           </Button>
         </form>
       </Form>
-      {/* Social buttons rendered outside in sign-in view */}
     </>
   );
 }

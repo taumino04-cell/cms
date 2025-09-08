@@ -33,10 +33,18 @@ export function useBreadcrumbs() {
 
     // If no exact match, fall back to generating breadcrumbs from the path
     const segments = pathname.split('/').filter(Boolean);
+
+    const toCamelCase = (value: string) =>
+      value
+        .toLowerCase()
+        // Remove '_' and '-' and uppercase the following character
+        // e.g. "user_profile" -> "userProfile", "user-profile" -> "userProfile"
+        .replace(/[-_]+([a-z0-9])/g, (_, c: string) => c.toUpperCase());
     return segments.map((segment, index) => {
       const path = `/${segments.slice(0, index + 1).join('/')}`;
+      const title = toCamelCase(segment);
       return {
-        title: segment.charAt(0).toUpperCase() + segment.slice(1),
+        title,
         link: path
       };
     });
