@@ -31,85 +31,80 @@ This is a starter template using the following stack:
 - Linting - [ESLint](https://eslint.org)
 - Pre-commit Hooks - [Husky](https://typicode.github.io/husky/)
 - Formatting - [Prettier](https://prettier.io)
+- i18n: [next-intl](https://next-intl-docs.vercel.app/) (locales: `en`, `vi`)
 
 _If you are looking for a Tanstack start dashboard template, here is the [repo](https://git.new/tanstack-start-dashboard)._
 
 ## Pages
 
-| Pages                                                                                 | Specifications                                                                                                                                                                                                                                                          |
-| :------------------------------------------------------------------------------------ | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [Signup / Signin](https://firebase.google.com/docs/auth)      | Authentication with **Firebase** provides secure authentication and user management with multiple sign-in options including passwordless authentication, social logins, and enterprise SSO - all designed to enhance security while delivering a seamless user experience. |
-| [Dashboard (Overview)](https://shadcn-dashboard.kiranism.dev/dashboard)    | Cards with Recharts graphs for analytics. Parallel routes in the overview sections feature independent loading, error handling, and isolated component rendering. |
-| [Product](https://shadcn-dashboard.kiranism.dev/dashboard/product)         | Tanstack tables with server side searching, filter, pagination by Nuqs which is a Type-safe search params state manager in nextjs                                                                                                                                       |
-| [Product/new](https://shadcn-dashboard.kiranism.dev/dashboard/product/new) | A Product Form with shadcn form (react-hook-form + zod).                                                                                                                                                                                                                |
-| [Profile](https://shadcn-dashboard.kiranism.dev/dashboard/profile)         | Account management UI that allows users to manage their profile and security settings                                                                                                                                                             |
-| [Kanban Board](https://shadcn-dashboard.kiranism.dev/dashboard/kanban)     | A Drag n Drop task management board with dnd-kit and zustand to persist state locally.                                                                                                                                                                                  |
-| [Not Found](https://shadcn-dashboard.kiranism.dev/dashboard/notfound)      | Not Found Page Added in the root level                                                                                                                                                                                                                                  |
-| [Global Error](https://sentry.io/for/nextjs/?utm_source=github&utm_medium=paid-community&utm_campaign=general-fy26q2-nextjs&utm_content=github-banner-project-tryfree)           | A centralized error page that captures and displays errors across the application. Integrated with **Sentry** to log errors, provide detailed reports, and enable replay functionality for better debugging. |
+- Auth: `/auth/sign-in` — Firebase Google demo sign-in (no sign-up page)
+- Dashboard Overview: `/dashboard/overview` — cards with Recharts; parallel routes with independent loading/error
+- Products: `/dashboard/product` — TanStack Table with Nuqs-powered filters, pagination, sorting
+- Product Detail: `/dashboard/product/[productId]` — example detail route
+- Profile: `/dashboard/profile` — account management UI
+- Kanban Board: `/dashboard/kanban` — drag-and-drop board via dnd-kit + Zustand
+- Config Farm: `/dashboard/config-farm` plus `/task-categories`, `/process-stages`
+- Not Found: catch-all route
+- Global Error: Sentry-backed global error page
 
-## Feature based organization
+## Project Structure
 
-```plaintext
+```text
 src/
-├── app/ # Next.js App Router directory
-│ ├── (auth)/ # Auth route group
-│ │ ├── (signin)/
-│ ├── (dashboard)/ # Dashboard route group
-│ │ ├── layout.tsx
-│ │ ├── loading.tsx
-│ │ └── page.tsx
-│ └── api/ # API routes
-│
-├── components/ # Shared components
-│ ├── ui/ # UI components (buttons, inputs, etc.)
-│ └── layout/ # Layout components (header, sidebar, etc.)
-│
-├── features/ # Feature-based modules
-│ ├── feature/
-│ │ ├── components/ # Feature-specific components
-│ │ ├── actions/ # Server actions
-│ │ ├── schemas/ # Form validation schemas
-│ │ └── utils/ # Feature-specific utilities
-│ │
-├── lib/ # Core utilities and configurations
-│ ├── auth/ # Auth configuration
-│ ├── db/ # Database utilities
-│ └── utils/ # Shared utilities
-│
-├── hooks/ # Custom hooks
-│ └── use-debounce.ts
-│
-├── stores/ # Zustand stores
-│ └── dashboard-store.ts
-│
-└── types/ # TypeScript types
-└── index.ts
+  app/
+    [locale]/                    # i18n segment (unprefixed URLs via next-intl)
+      layout.tsx                 # providers: next-intl, Nuqs, theme, Firebase
+      page.tsx                   # redirects → /dashboard/overview
+      global-error.tsx           # Sentry-reported global error
+      dashboard/
+        layout.tsx               # chrome: sidebar + header + KBar + auth gate
+        page.tsx                 # redirects → /dashboard/overview
+        overview/                # parallel routes: @sales, @bar_stats, @area_stats, @pie_stats
+        product/
+          page.tsx
+          [productId]/page.tsx
+        profile/[[...profile]]/page.tsx
+        kanban/page.tsx
+        config-farm/
+          page.tsx
+          task-categories/page.tsx
+          process-stages/page.tsx
+      [...not-found]/page.tsx
+
+  components/                    # UI + layout + KBar + primitives
+  features/                      # auth, products, kanban, overview, profile
+  hooks/                         # table state, media, debounce, etc.
+  lib/                           # utils, font, firebase client, datatable helpers
+  constants/                     # static data + mock API
+  types/                         # shared TS types
 ```
 
-## Getting Started
+## Internationalization
 
-> [!NOTE]  
-> We are using **Next 15** with **React 19**, follow these steps:
+- Library: `next-intl` configured in `src/i18n/routing.ts` (locales: `en`, `vi`)
+- URLs: `localePrefix: 'never'` in middleware for clean, unprefixed paths
+- Provider: `NextIntlClientProvider` in `src/app/[locale]/layout.tsx`
+- Language switcher: `src/components/language-switcher.tsx`
+
+## Getting Started
 
 Clone the repo:
 
 ```
 git clone https://github.com/Kiranism/next-shadcn-dashboard-starter.git
+cd next-shadcn-dashboard-starter
 ```
 
-- `pnpm install` ( we have legacy-peer-deps=true added in the .npmrc)
-- Create a `.env.local` file by copying the example environment file:
-  `cp env.example.txt .env.local`
-- Add the required environment variables to the `.env.local` file.
-- `pnpm run dev`
+Install and run:
 
-##### Environment Configuration Setup
+- `pnpm install`
+- Copy envs: `cp env.example.txt .env.local`
+- Add Firebase and optional Sentry envs to `.env.local`
+- Start dev server: `pnpm dev` then open http://localhost:3000
 
-To configure the environment for this project, refer to the `env.example.txt` file. This file contains the necessary environment variables required for authentication and error tracking.
+Notes:
 
-You should now be able to access the application at http://localhost:3000.
-
-> [!WARNING]
-> After cloning or forking the repository, be cautious when pulling or syncing with the latest changes, as this may result in breaking conflicts.
+- Auth gating uses a cookie (`fb_auth`) set by the Firebase client provider and enforced by `src/middleware.ts`.
+- Sentry is conditionally enabled via env in `next.config.ts`.
 
 Cheers! 🥂
