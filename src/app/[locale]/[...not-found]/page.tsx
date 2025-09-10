@@ -4,9 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/ui/button';
-import { LanguageSwitcher } from '@/components/language-switcher';
-import { ModeToggle } from '@/components/layout/ThemeToggle/theme-toggle';
-import { ThemeSelector } from '@/components/theme-selector';
+import { TopRightControls } from '@/components/layout/top-right-controls';
 
 export default function NotFound() {
   const t = useTranslations('common');
@@ -14,11 +12,7 @@ export default function NotFound() {
 
   return (
     <div className='bg-background relative min-h-screen'>
-      <div className='absolute top-4 right-4 z-50 flex items-center gap-2'>
-        <LanguageSwitcher />
-        <ModeToggle />
-        <ThemeSelector />
-      </div>
+      <TopRightControls />
       <div className='absolute top-1/2 left-1/2 mb-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center text-center'>
         <span className='from-foreground bg-linear-to-b to-transparent bg-clip-text text-[10rem] leading-none font-extrabold text-transparent'>
           404

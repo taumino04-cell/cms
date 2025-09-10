@@ -1,6 +1,5 @@
 import {
   Geist,
-  Geist_Mono,
   Instrument_Sans,
   Inter,
   Mulish,
@@ -14,7 +13,7 @@ const fontSans = Geist({
   variable: '--font-sans'
 });
 
-const fontMono = Geist_Mono({
+const fontMono = Noto_Sans_Mono({
   subsets: ['latin'],
   variable: '--font-mono'
 });
