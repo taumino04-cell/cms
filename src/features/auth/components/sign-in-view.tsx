@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Metadata } from 'next';
 
-import { useFirebaseAuth } from '@/components/layout/firebase-auth-provider';
+import { useSession } from 'next-auth/react';
 import UserAuthForm from './user-auth-form';
 
 export const metadata: Metadata = {
@@ -13,12 +13,12 @@ export const metadata: Metadata = {
 };
 
 export default function SignInViewPage() {
-  const { user } = useFirebaseAuth();
+  const { data: session, status } = useSession();
   const router = useRouter();
 
   useEffect(() => {
-    if (user) router.replace('/');
-  }, [user, router]);
+    if (status === 'authenticated') router.replace('/');
+  }, [status, router]);
 
   return (
     <div className='relative h-screen'>
