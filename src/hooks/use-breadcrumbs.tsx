@@ -34,6 +34,11 @@ export function useBreadcrumbs() {
     // If no exact match, fall back to generating breadcrumbs from the path
     const segments = pathname.split('/').filter(Boolean);
 
+    // remove path language segment if exists
+    if (segments.length > 0 && ['en', 'vi'].includes(segments[0])) {
+      segments.shift();
+    }
+
     const toCamelCase = (value: string) =>
       value
         .toLowerCase()

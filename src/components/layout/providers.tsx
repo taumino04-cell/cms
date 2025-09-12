@@ -1,8 +1,7 @@
 'use client';
 import React from 'react';
-import { useTheme } from 'next-themes';
 import { ActiveThemeProvider } from '../active-theme';
-import FirebaseAuthProvider from './firebase-auth-provider';
+import { SessionProvider } from 'next-auth/react';
 
 export default function Providers({
   activeThemeValue,
@@ -14,7 +13,7 @@ export default function Providers({
   return (
     <>
       <ActiveThemeProvider initialTheme={activeThemeValue}>
-        <FirebaseAuthProvider>{children}</FirebaseAuthProvider>
+        <SessionProvider>{children}</SessionProvider>
       </ActiveThemeProvider>
     </>
   );

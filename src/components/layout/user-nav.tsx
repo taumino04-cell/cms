@@ -13,23 +13,23 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { UserAvatarProfile } from '@/components/user-avatar-profile';
 import { useRouter } from 'next/navigation';
-import { useFirebaseAuth } from '@/components/layout/firebase-auth-provider';
+import { useSession, signOut } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 
 export function UserNav() {
   const t = useTranslations('common');
-  const { user, logout } = useFirebaseAuth();
+  const { data: session } = useSession();
   const router = useRouter();
   const onLogout = useCallback(() => {
-    logout().then(() => router.push('/auth/sign-in'));
-  }, [logout, router]);
+    signOut({ callbackUrl: '/auth/sign-in' });
+  }, [router]);
 
-  if (!user) return null;
+  if (!session?.user) return null;
 
   const avatarUser = {
-    imageUrl: user.photoURL || undefined,
-    fullName: user.displayName || null,
-    emailAddresses: [{ emailAddress: user.email || '' }]
+    imageUrl: (session.user as any).image || undefined,
+    fullName: session.user.name || null,
+    emailAddresses: [{ emailAddress: session.user.email || '' }]
   };
 
   return (
@@ -48,10 +48,10 @@ export function UserNav() {
         <DropdownMenuLabel className='font-normal'>
           <div className='flex flex-col space-y-1'>
             <p className='text-sm leading-none font-medium'>
-              {user.displayName}
+              {session.user.name}
             </p>
             <p className='text-muted-foreground text-xs leading-none'>
-              {user.email}
+              {session.user.email}
             </p>
           </div>
         </DropdownMenuLabel>
