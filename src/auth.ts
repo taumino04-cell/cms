@@ -86,6 +86,8 @@ const auth: AuthOptions = {
       async authorize(credentials) {
         try {
           if (!credentials?.email || !credentials.password) return null;
+          console.log('Authorizing', { credentials, LOGIN_URL });
+
           const res = await fetch(LOGIN_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -94,6 +96,8 @@ const auth: AuthOptions = {
               password: credentials.password
             })
           });
+
+          console.log('Login response', res);
 
           if (!res.ok) {
             let message = 'Invalid credentials';
