@@ -1,19 +1,19 @@
 'use client';
 import { useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useFirebaseAuth } from '@/components/layout/firebase-auth-provider';
+import { useSession } from 'next-auth/react';
 
 export default function RequireAuth({
   children
 }: {
   children: React.ReactNode;
 }) {
-  const { user } = useFirebaseAuth();
+  const { status } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    if (user === null) {
+    if (status === 'unauthenticated') {
       const redirect_url =
         typeof window !== 'undefined'
           ? window.location.pathname + window.location.search
@@ -22,9 +22,9 @@ export default function RequireAuth({
         `/auth/sign-in?redirect_url=${encodeURIComponent(redirect_url)}`
       );
     }
-  }, [user, router, searchParams]);
+  }, [status, router, searchParams]);
 
-  if (user === undefined) return null; // loading
-  if (user === null) return null;
+  if (status === 'loading') return null;
+  if (status === 'unauthenticated') return null;
   return <>{children}</>;
 }

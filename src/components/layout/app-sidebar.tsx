@@ -29,7 +29,7 @@ import {
 } from '@/components/ui/sidebar';
 import { UserAvatarProfile } from '@/components/user-avatar-profile';
 import { navItems } from '@/constants/data';
-import { useFirebaseAuth } from './firebase-auth-provider';
+import { useSession, signOut } from 'next-auth/react';
 import {
   IconChevronRight,
   IconChevronsDown,
@@ -37,32 +37,38 @@ import {
   IconUserCircle
 } from '@tabler/icons-react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
 import * as React from 'react';
 import { Icons } from '../icons';
 // import { OrgSwitcher } from '../org-switcher';
 import { Leaf } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Button } from '../ui/button';
+import { usePathname, useRouter } from '@/i18n/routing';
+import { useSearchParams } from 'next/navigation';
 
 export default function AppSidebar() {
   const pathname = usePathname();
-  const { user, logout } = useFirebaseAuth();
+  const { data: session } = useSession();
   const router = useRouter();
   const t = useTranslations('common');
+  const searchParams = useSearchParams();
 
   const setLocale = (locale: 'en' | 'vi') => {
     try {
       document.cookie = `NEXT_LOCALE=${locale}; path=/; max-age=31536000`;
-      router.refresh();
+      // Update URL new locale
+      const newPath = searchParams.toString()
+        ? `${pathname}?${searchParams.toString()}`
+        : pathname;
+      router.replace(newPath, { locale });
     } catch (e) {
       // no-op
     }
   };
 
   const onLogout = React.useCallback(() => {
-    logout().then(() => router.push('/auth/sign-in'));
-  }, [logout, router]);
+    signOut({ callbackUrl: '/auth/sign-in' });
+  }, [router]);
 
   return (
     <Sidebar collapsible='icon'>
@@ -164,14 +170,16 @@ export default function AppSidebar() {
                   size='lg'
                   className='data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground'
                 >
-                  {user && (
+                  {session?.user && (
                     <UserAvatarProfile
                       className='h-8 w-8 rounded-lg'
                       showInfo
                       user={{
-                        imageUrl: user.photoURL || undefined,
-                        fullName: user.displayName || null,
-                        emailAddresses: [{ emailAddress: user.email || '' }]
+                        imageUrl: (session.user as any).image || undefined,
+                        fullName: session.user.name || null,
+                        emailAddresses: [
+                          { emailAddress: session.user.email || '' }
+                        ]
                       }}
                     />
                   )}
@@ -186,14 +194,16 @@ export default function AppSidebar() {
               >
                 <DropdownMenuLabel className='p-0 font-normal'>
                   <div className='px-1 py-1.5'>
-                    {user && (
+                    {session?.user && (
                       <UserAvatarProfile
                         className='h-8 w-8 rounded-lg'
                         showInfo
                         user={{
-                          imageUrl: user.photoURL || undefined,
-                          fullName: user.displayName || null,
-                          emailAddresses: [{ emailAddress: user.email || '' }]
+                          imageUrl: (session.user as any).image || undefined,
+                          fullName: session.user.name || null,
+                          emailAddresses: [
+                            { emailAddress: session.user.email || '' }
+                          ]
                         }}
                       />
                     )}

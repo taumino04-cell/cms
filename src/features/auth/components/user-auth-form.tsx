@@ -15,8 +15,7 @@ import { useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import * as z from 'zod';
-import { getFirebaseAuth } from '@/lib/firebase/client';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { signIn } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 import { Eye, EyeOff } from 'lucide-react';
 
@@ -42,19 +41,22 @@ export default function UserAuthForm() {
   });
 
   const onSubmit = async (data: UserFormValue) => {
-    const auth = getFirebaseAuth();
     startTransition(async () => {
       try {
-        // Try sign-in; if user doesn’t exist, create
-        // try {
-        //   await signInWithEmailAndPassword(auth, data.email, data.password);
-        // } catch (e) {
-        //   await createUserWithEmailAndPassword(auth, data.email, data.password);
-        // }
-        await signInWithEmailAndPassword(auth, data.email, data.password);
-
-        toast.success(t('loginSuccess'));
-        router.replace(redirectUrl);
+        const res = await signIn('credentials', {
+          redirect: false,
+          email: data.email,
+          password: data.password,
+          callbackUrl: redirectUrl
+        });
+        if (res && !res.error) {
+          toast.success(t('loginSuccess'));
+          router.replace(res.url || redirectUrl);
+        } else {
+          const message = (res && res.error) || t('loginFailed');
+          console.log(res);
+          toast.error(message);
+        }
       } catch (err) {
         console.error(err);
         toast.error(t('loginFailed'));

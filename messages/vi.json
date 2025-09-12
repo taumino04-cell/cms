@@ -25,7 +25,8 @@
     "notFoundTitle": "Không tìm thấy trang",
     "notFoundMessage": "Xin lỗi, chúng tôi không thể tìm thấy trang bạn đang tìm kiếm.",
     "goBack": "Quay lại",
-    "backToHome": "Về trang chủ"
+    "backToHome": "Về trang chủ",
+    "overview": "Tổng quan"
   },
   "auth": {
     "login": "Đăng nhập",

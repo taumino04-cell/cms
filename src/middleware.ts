@@ -1,37 +1,42 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import createMiddleware from 'next-intl/middleware';
+import { withAuth } from 'next-auth/middleware';
 
-const isProtectedRoute = (req: NextRequest) => {
-  const path = req.nextUrl.pathname;
-  // Exclude /auth/sign-in and its subroutes
-  if (path.startsWith('/auth/sign-in')) return false;
-  // Protect everything else except Next.js internals/static (handled by matcher)
-  return true;
-};
+import { routing } from './i18n/routing';
 
-const intlMiddleware = createMiddleware({
-  locales: ['en', 'vi'],
-  defaultLocale: 'en',
-  localePrefix: 'never'
-});
+const publicPages = ['/auth/sign-in'];
 
-export default function middleware(req: NextRequest) {
-  // First, run locale negotiation and cookie handling
-  const intlResponse = intlMiddleware(req);
+const intlMiddleware = createMiddleware(routing);
 
-  if (isProtectedRoute(req)) {
-    const hasAuth = req.cookies.get('fb_auth')?.value === '1';
-    if (!hasAuth) {
-      const url = new URL('/auth/sign-in', req.url);
-      url.searchParams.set(
-        'redirect_url',
-        req.nextUrl.pathname + req.nextUrl.search
-      );
-      return NextResponse.redirect(url);
+const authMiddleware = withAuth(
+  // Note that this callback is only invoked if
+  // the `authorized` callback has returned `true`
+  // and not for pages listed in `pages`.
+  (req) => intlMiddleware(req),
+  {
+    callbacks: {
+      authorized: ({ token }) => token != null
+    },
+    pages: {
+      signIn: '/auth/sign-in'
     }
   }
-  // Continue with the response from next-intl
-  return intlResponse;
+);
+
+export default function middleware(req: NextRequest) {
+  const publicPathnameRegex = RegExp(
+    `^(/(${routing.locales.join('|')}))?(${publicPages
+      .flatMap((p) => (p === '/' ? ['', '/'] : p))
+      .join('|')})/?$`,
+    'i'
+  );
+  const isPublicPage = publicPathnameRegex.test(req.nextUrl.pathname);
+
+  if (isPublicPage) {
+    return intlMiddleware(req);
+  } else {
+    return (authMiddleware as any)(req);
+  }
 }
 
 export const config = {
