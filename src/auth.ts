@@ -87,7 +87,6 @@ const auth: AuthOptions = {
         try {
           if (!credentials?.email || !credentials.password) return null;
           console.log('Authorizing', { credentials, LOGIN_URL });
-
           const res = await fetch(LOGIN_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -131,6 +130,7 @@ const auth: AuthOptions = {
             accessTokenExpires
           } as any;
         } catch (e: any) {
+          console.log('Authorize error', e);
           throw new Error(e?.message || 'Login failed');
         }
       }
